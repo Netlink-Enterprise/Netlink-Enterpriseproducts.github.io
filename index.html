@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netlink Enterprise | Gold Star Portal</title>
+    <title>Netlink Enterprise | Ultimate Store</title>
     <style>
-        :root { --primary: #2563eb; --success: #10b981; --dark: #0f172a; --gold: #f59e0b; }
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 0; }
+        :root { --primary: #2563eb; --success: #10b981; --dark: #0f172a; --gold: #f59e0b; --danger: #ef4444; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 0; overflow-x: hidden; }
         
         /* Entrance Portal */
         #portal-overlay {
@@ -14,25 +14,48 @@
             background: #0f172a; color: white; display: flex; 
             justify-content: center; align-items: center; z-index: 2000;
         }
-        .portal-box { text-align: center; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid #334155; width: 400px; }
+        .portal-box { text-align: center; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid #334155; width: 420px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
 
+        /* Navigation Header */
         header { 
             background: var(--dark); color: white; padding: 15px 30px; 
             position: sticky; top: 0; z-index: 1000;
-            display: flex; justify-content: space-between; align-items: center; gap: 20px;
+            display: flex; justify-content: space-between; align-items: center; gap: 15px;
         }
+        .search-bar { flex-grow: 1; max-width: 400px; padding: 10px 18px; border-radius: 25px; border: none; background: #1e293b; color: white; font-size: 0.9rem; outline: none; }
+        .search-bar:focus { background: #334155; border: 1px solid var(--primary); }
 
-        .search-bar { flex-grow: 1; max-width: 400px; padding: 8px 15px; border-radius: 20px; border: none; background: #1e293b; color: white; }
+        /* Member Styling */
+        .gold-star { background: var(--gold); color: #000; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 900; margin-right: 8px; }
+        .price-member { color: var(--success); font-weight: 800; font-size: 1.1rem; }
+        .price-old { text-decoration: line-through; color: #94a3b8; font-size: 0.8rem; margin-left: 5px; }
 
-        .gold-star { background: var(--gold); color: black; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; }
+        /* Admin Section */
+        #admin-panel { background: #e2e8f0; padding: 15px 30px; border-bottom: 2px solid #cbd5e1; display: none; }
+        .admin-form { display: flex; gap: 10px; flex-wrap: wrap; }
+        .admin-input { padding: 8px; border-radius: 6px; border: 1px solid #94a3b8; flex: 1; }
 
+        /* Cart Drawer */
+        #cart-drawer {
+            position: fixed; right: -350px; top: 0; width: 320px; height: 100%;
+            background: white; box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1500; padding: 25px; display: flex; flex-direction: column;
+        }
+        #cart-drawer.open { right: 0; }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+
+        /* UI Elements */
         .btn { border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; padding: 10px 20px; }
-        .btn-google { background: white; color: #3c4043; border: 1px solid #dadce0; width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-buy { background: var(--primary); color: white; width: 100%; margin-top: auto; }
+        .btn-buy:hover { background: #1d4ed8; }
+        .btn-cart-toggle { background: #334155; color: white; display: flex; align-items: center; gap: 10px; }
+        .badge { background: var(--danger); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
         
-        .container { padding: 20px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .card { background: white; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: 0.3s; }
+        .container { padding: 30px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .cat-tag { font-size: 0.65rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
         
         .hidden { display: none !important; }
     </style>
@@ -41,30 +64,56 @@
 
 <div id="portal-overlay">
     <div class="portal-box">
-        <h1>NETLINK ENTERPRISE</h1>
-        <button class="btn" style="background:var(--success); color:white; width:100%;" onclick="enterApp(false)">🛒 Guest Buying</button>
-        <button class="btn btn-google" onclick="googleLogin()">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" width="18" alt="G">
-            Sign in with Gmail
-        </button>
-        <div style="margin-top:30px; border-top: 1px solid #334155; padding-top:20px;">
-            <input type="password" id="admin-pass" placeholder="Admin Key" style="background:#1e293b; border:none; color:white; padding:10px; border-radius:5px; width:80%; margin-bottom:10px;"><br>
-            <button class="btn" style="background:transparent; border:1px solid white; color:white; font-size:0.8rem;" onclick="enterAdmin()">Staff Login</button>
+        <h1 style="letter-spacing: 2px;">NETLINK</h1>
+        <p style="opacity: 0.7;">ENTERPRISE HARDWARE SOLUTIONS</p>
+        <button class="btn" style="background:var(--success); color:white; width:100%; margin-bottom:12px;" onclick="enterApp(false)">🛒 GUEST ACCESS</button>
+        <button class="btn" style="background:white; color:#333; width:100%; border: 1px solid #ddd;" onclick="googleLogin()">SIGN IN WITH GMAIL</button>
+        
+        <div style="margin-top:40px; border-top: 1px solid #334155; padding-top:25px;">
+            <input type="password" id="admin-pass" placeholder="Staff Key Code" style="background:#1e293b; border:none; color:white; padding:12px; border-radius:8px; width:80%;">
+            <button class="btn" style="background:transparent; border:1px solid white; color:white; margin-top:12px; font-size:0.8rem;" onclick="enterAdmin()">STAFF LOGIN</button>
         </div>
     </div>
 </div>
 
 <header id="main-header" class="hidden">
-    <h2 style="margin:0; font-size:1.1rem;">Netlink</h2>
-    <input type="text" id="search" class="search-bar" placeholder="Search components..." onkeyup="filterItems()">
+    <h2 style="margin:0; font-size:1.3rem; color: var(--gold);">Netlink</h2>
+    <input type="text" id="search" class="search-bar" placeholder="Search for GPUs, CPUs, RAM..." onkeyup="filterItems()">
     <div style="display:flex; gap:15px; align-items:center;">
-        <div id="user-info" style="text-align:right; font-size:0.8rem;">
-            <b id="user-name">Guest</b> <br>
-            <span id="gold-star-label" class="hidden"><span class="gold-star">⭐ GOLD STAR</span></span>
-        </div>
-        <button class="btn" style="background:#ef4444; color:white; padding:5px 15px;" onclick="location.reload()">Exit</button>
+        <span id="gold-star-label" class="hidden"><span class="gold-star">⭐ GOLD STAR</span></span>
+        <b id="user-name" style="font-size:0.9rem;">Guest</b>
+        <button class="btn btn-cart-toggle" onclick="toggleCart()">
+            🛒 <span class="badge" id="cart-count">0</span>
+        </button>
+        <button class="btn" style="background:var(--danger); color:white; padding:8px 15px;" onclick="location.reload()">EXIT</button>
     </div>
 </header>
+
+<div id="admin-panel">
+    <h4 style="margin:0 0 10px 0; color: var(--dark);">SYSTEM CREATOR: Add New Inventory</h4>
+    <div class="admin-form">
+        <input type="text" id="new-name" class="admin-input" placeholder="Product Name">
+        <input type="text" id="new-cat" class="admin-input" placeholder="Category">
+        <input type="number" id="new-price" class="admin-input" placeholder="Price (0.00)" step="0.01">
+        <button class="btn" style="background:var(--dark); color:white;" onclick="createNewItem()">ADD ITEM</button>
+    </div>
+</div>
+
+<div id="cart-drawer" id="cart-drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+        <h3 style="margin:0;">Shopping Cart</h3>
+        <button onclick="toggleCart()" style="background:none; border:none; cursor:pointer; font-size:1.8rem; color:#94a3b8;">&times;</button>
+    </div>
+    <div id="cart-items-list" style="flex-grow:1; overflow-y:auto;"></div>
+    <div style="border-top: 2px solid #f1f5f9; padding-top:20px; margin-top:10px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.9rem; margin-bottom:5px;"><span>Subtotal:</span><span id="subtotal">$0.00</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.9rem; color:var(--danger); margin-bottom:10px;"><span>Tax (7%):</span><span id="tax-amount">$0.00</span></div>
+        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem; border-top:1px solid #eee; padding-top:10px;">
+            <span>TOTAL:</span><span id="cart-total" style="color:var(--success)">$0.00</span>
+        </div>
+        <button class="btn btn-buy" style="background:var(--success); margin-top:20px; height:50px;" onclick="alert('Transaction Completed!')">CHECKOUT</button>
+    </div>
+</div>
 
 <div id="main-content" class="container hidden">
     <div class="product-grid" id="grid"></div>
@@ -73,18 +122,21 @@
 <script>
     let isMember = false;
     let isAdmin = false;
+    let cart = [];
+    const taxRate = 0.07;
 
-    const products = [
-        { name: "RTX 5090 Ti", cat: "GPU", price: 1999 }, { name: "Ryzen 9 9950X", cat: "CPU", price: 699 },
-        { name: "Intel i9-14900K", cat: "CPU", price: 589 }, { name: "64GB DDR5 RAM", cat: "Memory", price: 210 },
-        { name: "4TB NVMe SSD", cat: "Storage", price: 320 }, { name: "RX 7900 XTX", cat: "GPU", price: 949 },
-        { name: "Liquid Arctic 360", cat: "Cooler", price: 145 }, { name: "Titan 1000W PSU", cat: "Power", price: 180 },
-        { name: "RGB LED Strips", cat: "Modding", price: 25 }, { name: "Silent Case Fan", cat: "Cooling", price: 29 },
-        { name: "Z790 Master", cat: "Mobo", price: 299 }, { name: "X670E Hero", cat: "Mobo", price: 350 },
-        { name: "10Gbps LAN Card", cat: "Network", price: 85 }, { name: "Vertical Mount", cat: "Parts", price: 45 },
-        { name: "Fan Hub Pro", cat: "Parts", price: 18 }, { name: "Thermal Paste X", cat: "Cooling", price: 12 },
-        { name: "Mechanical KBD", cat: "Peripherals", price: 110 }, { name: "Wireless Mouse", cat: "Peripherals", price: 75 },
-        { name: "4K 144Hz Monitor", cat: "Displays", price: 499 }, { name: "Full Tower Case", cat: "Cases", price: 150 }
+    // Start with 20 items
+    let products = [
+        { name: "RTX 5090 Ti", cat: "GPU", price: 1999.99 }, { name: "Ryzen 9 9950X", cat: "CPU", price: 699.50 },
+        { name: "Intel i9-14900K", cat: "CPU", price: 589.00 }, { name: "64GB DDR5 RAM", cat: "Memory", price: 210.99 },
+        { name: "4TB NVMe SSD", cat: "Storage", price: 320.00 }, { name: "RX 7900 XTX", cat: "GPU", price: 949.99 },
+        { name: "Liquid Arctic 360", cat: "Cooler", price: 145.25 }, { name: "Titan 1000W PSU", cat: "Power", price: 180.00 },
+        { name: "RGB LED Strips", cat: "Modding", price: 25.50 }, { name: "Silent Case Fan", cat: "Cooling", price: 29.99 },
+        { name: "Z790 Master", cat: "Mobo", price: 299.00 }, { name: "X670E Hero", cat: "Mobo", price: 350.00 },
+        { name: "10Gbps LAN Card", cat: "Network", price: 85.00 }, { name: "Vertical Mount", cat: "Parts", price: 45.00 },
+        { name: "Fan Hub Pro", cat: "Parts", price: 18.25 }, { name: "Thermal Paste X", cat: "Cooling", price: 12.00 },
+        { name: "Mechanical KBD", cat: "Peripherals", price: 110.99 }, { name: "Wireless Mouse", cat: "Peripherals", price: 75.50 },
+        { name: "4K 144Hz Monitor", cat: "Displays", price: 499.00 }, { name: "Full Tower Case", cat: "Cases", price: 150.00 }
     ];
 
     function googleLogin() {
@@ -94,16 +146,15 @@
             document.getElementById('user-name').innerText = email.split('@')[0];
             document.getElementById('gold-star-label').classList.remove('hidden');
             enterApp();
-        } else {
-            alert("Invalid email. Must end with @gmail.com");
-        }
+        } else { alert("Access Denied: Only @gmail.com addresses allowed."); }
     }
 
     function enterAdmin() {
         if(document.getElementById('admin-pass').value === '201412') {
             isAdmin = true;
+            document.getElementById('admin-panel').style.display = 'block';
             enterApp();
-        } else { alert("Key Denied"); }
+        } else { alert("Staff Code Invalid"); }
     }
 
     function enterApp() {
@@ -113,30 +164,62 @@
         render(products);
     }
 
+    function createNewItem() {
+        const name = document.getElementById('new-name').value;
+        const cat = document.getElementById('new-cat').value;
+        const price = parseFloat(document.getElementById('new-price').value);
+        if(name && cat && !isNaN(price)) {
+            products.unshift({ name, cat, price }); // Add to front
+            render(products);
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+        } else { alert("Error: Please provide valid name, category, and price."); }
+    }
+
     function render(list) {
         const grid = document.getElementById('grid');
         grid.innerHTML = '';
         list.forEach(p => {
-            const finalPrice = isMember ? (p.price * 0.85).toFixed(2) : p.price;
+            const finalPrice = isMember ? (p.price * 0.85).toFixed(2) : p.price.toFixed(2);
             grid.innerHTML += `
                 <div class="card">
-                    <span style="font-size:0.6rem; color:var(--primary)">${p.cat}</span>
-                    <h4 style="margin:5px 0">${p.name}</h4>
-                    <div style="color:var(--success); font-weight:800;">$${finalPrice} ${isMember ? '<span style="font-size:0.6rem; color:#94a3b8; text-decoration:line-through;">$'+p.price+'</span>' : ''}</div>
-                    ${isAdmin ? `<button onclick="adminEdit()" style="margin-top:5px; font-size:0.7rem;">Edit</button>` : ''}
-                    <button class="btn btn-buy" style="padding:5px; font-size:0.8rem; margin-top:10px;">Buy</button>
+                    <span class="cat-tag">${p.cat}</span>
+                    <h4 style="margin:8px 0">${p.name}</h4>
+                    <div class="price-member">$${finalPrice} ${isMember ? `<span class="price-old">$${p.price.toFixed(2)}</span>` : ''}</div>
+                    <button class="btn btn-buy" onclick="addToCart('${p.name}', ${finalPrice})">Add to Cart</button>
                 </div>`;
         });
     }
+
+    function addToCart(name, price) {
+        cart.push({name, price});
+        updateCart();
+        document.getElementById('cart-drawer').classList.add('open');
+    }
+
+    function updateCart() {
+        document.getElementById('cart-count').innerText = cart.length;
+        const list = document.getElementById('cart-items-list');
+        let subtotal = 0;
+        list.innerHTML = '';
+        cart.forEach(item => {
+            list.innerHTML += `<div class="cart-item"><span>${item.name}</span><b>$${item.price}</b></div>`;
+            subtotal += parseFloat(item.price);
+        });
+        
+        const tax = subtotal * taxRate;
+        const total = subtotal + tax;
+        document.getElementById('subtotal').innerText = '$' + subtotal.toFixed(2);
+        document.getElementById('tax-amount').innerText = '$' + tax.toFixed(2);
+        document.getElementById('cart-total').innerText = '$' + total.toFixed(2);
+    }
+
+    function toggleCart() { document.getElementById('cart-drawer').classList.toggle('open'); }
 
     function filterItems() {
         const query = document.getElementById('search').value.toLowerCase();
         const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.cat.toLowerCase().includes(query));
         render(filtered);
-    }
-
-    function adminEdit() {
-        if(prompt("Code:") === '888888') alert("Unlocked");
     }
 </script>
 </body>
