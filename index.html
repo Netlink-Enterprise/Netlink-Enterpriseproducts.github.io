@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netlink Pro | Member Portal</title>
+    <title>Netlink Enterprise | Full Inventory</title>
     <style>
         :root { --primary: #2563eb; --success: #10b981; --dark: #0f172a; --accent: #3b82f6; --google-red: #ea4335; }
         body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 0; }
@@ -16,43 +16,39 @@
         }
         .portal-box { text-align: center; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid #334155; width: 400px; }
 
-        /* Header */
         header { 
             background: var(--dark); color: white; padding: 15px 30px; 
             position: sticky; top: 0; z-index: 1000;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .user-profile { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; border-left: 1px solid #334155; padding-left: 15px; }
-        .avatar { width: 30px; height: 30px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        /* Pricing Styles */
-        .old-price { text-decoration: line-through; color: #94a3b8; font-size: 0.9rem; margin-right: 5px; }
-        .discount-badge { background: #fef2f2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-bottom: 5px; display: inline-block; }
+        .old-price { text-decoration: line-through; color: #94a3b8; font-size: 0.8rem; }
+        .discount-badge { background: #fef2f2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; margin-bottom: 5px; display: inline-block; }
 
         .btn { border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; padding: 10px 20px; }
         .btn-google { background: white; color: #3c4043; border: 1px solid #dadce0; width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-buy { background: var(--primary); color: white; width: 100%; margin-top: auto; }
         
-        .hidden { display: none !important; }
         .container { padding: 20px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; position: relative; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: 0.3s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
+        .tag { font-size: 0.6rem; font-weight: bold; color: var(--accent); text-transform: uppercase; }
+        .price { color: var(--success); font-weight: 800; font-size: 1.1rem; }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div id="portal-overlay">
     <div class="portal-box">
-        <h1 style="margin-bottom:10px;">NETLINK</h1>
-        <p style="opacity:0.7; margin-bottom:30px;">Premium Hardware & Systems</p>
-        
-        <button class="btn" style="background:var(--success); color:white; width:100%;" onclick="enterApp(false)">🛒 Guest Shopping</button>
-        
+        <h1>NETLINK</h1>
+        <button class="btn" style="background:var(--success); color:white; width:100%;" onclick="enterApp(false)">🛒 Guest Buying</button>
         <button class="btn btn-google" onclick="googleLogin()">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" width="18" alt="G">
-            Sign in with Google (15% Discount)
+            Sign in with Google
         </button>
-
         <div style="margin-top:30px; border-top: 1px solid #334155; padding-top:20px;">
             <input type="password" id="admin-pass" placeholder="Admin Key" style="background:#1e293b; border:none; color:white; padding:10px; border-radius:5px; width:80%; margin-bottom:10px;"><br>
             <button class="btn" style="background:transparent; border:1px solid white; color:white; font-size:0.8rem;" onclick="enterAdmin()">Staff Login</button>
@@ -61,16 +57,10 @@
 </div>
 
 <header id="main-header" class="hidden">
-    <div>
-        <h2 style="margin:0; font-size:1.1rem;">Netlink Store</h2>
-        <span id="discount-status" style="font-size:0.7rem; color:var(--success)"></span>
-    </div>
-    
+    <h2 style="margin:0; font-size:1.1rem;">Netlink Store</h2>
     <div style="display:flex; gap:15px; align-items:center;">
-        <button class="btn" style="background:#334155; color:white;" onclick="alert('Cart empty!')">Cart</button>
-        <div class="user-profile" id="user-display">
-            <div class="avatar">G</div>
-            <div><b id="user-name">Guest</b><br><span style="opacity:0.6" id="user-status">Free Account</span></div>
+        <div id="user-info" style="text-align:right; font-size:0.8rem;">
+            <b id="user-name">Guest</b><br><span id="user-status" style="color:#94a3b8">Standard</span>
         </div>
         <button class="btn" style="background:#ef4444; color:white;" onclick="location.reload()">Exit</button>
     </div>
@@ -84,37 +74,50 @@
     let isMember = false;
     let isAdmin = false;
 
+    // THE FULL 20 ITEMS ARE BACK
     const products = [
         { name: "RTX 5090 Ti", cat: "GPU", price: 1999 },
         { name: "Ryzen 9 9950X", cat: "CPU", price: 699 },
+        { name: "Intel i9-14900K", cat: "CPU", price: 589 },
         { name: "64GB DDR5 RAM", cat: "Memory", price: 210 },
         { name: "4TB NVMe SSD", cat: "Storage", price: 320 },
         { name: "RX 7900 XTX", cat: "GPU", price: 949 },
         { name: "Liquid Arctic 360", cat: "Cooler", price: 145 },
         { name: "Titan 1000W PSU", cat: "Power", price: 180 },
-        { name: "Mechanical KBD", cat: "Peripherals", price: 110 }
-        // (Other 12 products would go here)
+        { name: "RGB LED Strips", cat: "Modding", price: 25 },
+        { name: "Silent Case Fan", cat: "Cooling", price: 29 },
+        { name: "Z790 Master", cat: "Mobo", price: 299 },
+        { name: "X670E Hero", cat: "Mobo", price: 350 },
+        { name: "10Gbps LAN Card", cat: "Network", price: 85 },
+        { name: "Vertical Mount", cat: "Parts", price: 45 },
+        { name: "Fan Hub Pro", cat: "Parts", price: 18 },
+        { name: "Thermal Paste X", cat: "Cooling", price: 12 },
+        { name: "Mechanical KBD", cat: "Peripherals", price: 110 },
+        { name: "Wireless Mouse", cat: "Peripherals", price: 75 },
+        { name: "4K 144Hz Monitor", cat: "Displays", price: 499 },
+        { name: "Full Tower Case", cat: "Cases", price: 150 }
     ];
 
     function googleLogin() {
-        const email = prompt("Enter Google Email:", "user@gmail.com");
-        if(email && email.includes("@")) {
+        const user = prompt("Enter Name:");
+        if(user) {
             isMember = true;
-            document.getElementById('user-name').innerText = email.split('@')[0];
-            document.getElementById('user-status').innerText = "Gold Member";
-            document.getElementById('discount-status').innerText = "✓ 15% GOOGLE DISCOUNT APPLIED";
-            enterApp(true);
+            document.getElementById('user-name').innerText = user;
+            document.getElementById('user-status').innerText = "Gold Member (15% Off)";
+            document.getElementById('user-status').style.color = "#10b981";
+            alert("Welcome " + user + "! Your 15% Google Discount is now active.");
+            enterApp();
         }
     }
 
     function enterAdmin() {
         if(document.getElementById('admin-pass').value === '201412') {
             isAdmin = true;
-            enterApp(false);
+            enterApp();
         } else { alert("Denied"); }
     }
 
-    function enterApp(member) {
+    function enterApp() {
         document.getElementById('portal-overlay').classList.add('hidden');
         document.getElementById('main-header').classList.remove('hidden');
         document.getElementById('main-content').classList.remove('hidden');
@@ -125,23 +128,22 @@
         const grid = document.getElementById('grid');
         grid.innerHTML = '';
         products.forEach(p => {
-            let finalPrice = p.price;
             let priceHTML = `<div class="price">$${p.price}</div>`;
-            
             if(isMember) {
-                finalPrice = (p.price * 0.85).toFixed(2);
+                const discounted = (p.price * 0.85).toFixed(2);
                 priceHTML = `
-                    <div class="discount-badge">GOOGLE MEMBER PRICE</div>
-                    <div class="price"><span class="old-price">$${p.price}</span> $${finalPrice}</div>
+                    <div class="discount-badge">GOOGLE DISCOUNT</div>
+                    <div class="price"><span class="old-price">$${p.price}</span> $${discounted}</div>
                 `;
             }
 
             grid.innerHTML += `
                 <div class="card">
                     <span class="tag">${p.cat}</span>
-                    <h3 style="margin:10px 0 5px 0">${p.name}</h3>
+                    <h4 style="margin:5px 0">${p.name}</h4>
                     ${priceHTML}
-                    <button class="btn btn-buy">Add to Cart</button>
+                    ${isAdmin ? `<button onclick="alert('Edit Unlocked')" style="font-size:0.7rem; margin-top:5px;">Edit</button>` : ''}
+                    <button class="btn btn-buy" style="padding:5px; font-size:0.8rem; margin-top:10px;">Buy</button>
                 </div>`;
         });
     }
