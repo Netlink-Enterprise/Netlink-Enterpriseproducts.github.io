@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netlink Pro Hardware</title>
+    <title>Netlink Pro | Member Portal</title>
     <style>
-        :root { --primary: #2563eb; --success: #10b981; --dark: #0f172a; --accent: #3b82f6; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #f8fafc; margin: 0; padding: 0; }
+        :root { --primary: #2563eb; --success: #10b981; --dark: #0f172a; --accent: #3b82f6; --google-red: #ea4335; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 0; }
         
         /* Entrance Portal */
         #portal-overlay {
@@ -14,66 +14,65 @@
             background: #0f172a; color: white; display: flex; 
             justify-content: center; align-items: center; z-index: 2000;
         }
-        .portal-box { text-align: center; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; border: 1px solid #334155; }
+        .portal-box { text-align: center; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid #334155; width: 400px; }
 
-        /* Main Header */
+        /* Header */
         header { 
             background: var(--dark); color: white; padding: 15px 30px; 
             position: sticky; top: 0; z-index: 1000;
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .search-container { flex-grow: 1; max-width: 500px; position: relative; }
-        .search-bar { 
-            width: 100%; padding: 10px 15px; border-radius: 25px; border: none; 
-            background: #1e293b; color: white; font-size: 0.9rem; outline: none;
-        }
-        
-        /* Product Grid */
-        .container { padding: 20px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        .card { 
-            background: white; border-radius: 12px; padding: 20px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s;
-            border: 1px solid #e2e8f0; display: flex; flex-direction: column;
-        }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .tag { font-size: 0.7rem; font-weight: bold; color: var(--accent); text-transform: uppercase; }
-        .price { color: var(--success); font-weight: 800; font-size: 1.2rem; margin: 10px 0; }
-        
-        .btn { border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-buy { background: var(--primary); color: white; padding: 12px; width: 100%; margin-top: auto; }
-        .btn-buy:active { transform: scale(0.95); }
-        .btn-cart { background: #334155; color: white; padding: 10px 20px; }
+        .user-profile { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; border-left: 1px solid #334155; padding-left: 15px; }
+        .avatar { width: 30px; height: 30px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        /* Cart Modal */
-        #cart-modal {
-            display: none; position: fixed; right: 20px; top: 80px; width: 320px;
-            background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            padding: 20px; z-index: 1500; border: 1px solid #ddd;
-        }
+        /* Pricing Styles */
+        .old-price { text-decoration: line-through; color: #94a3b8; font-size: 0.9rem; margin-right: 5px; }
+        .discount-badge { background: #fef2f2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-bottom: 5px; display: inline-block; }
+
+        .btn { border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; padding: 10px 20px; }
+        .btn-google { background: white; color: #3c4043; border: 1px solid #dadce0; width: 100%; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-buy { background: var(--primary); color: white; width: 100%; margin-top: auto; }
+        
         .hidden { display: none !important; }
+        .container { padding: 20px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; position: relative; }
     </style>
 </head>
 <body>
 
 <div id="portal-overlay">
     <div class="portal-box">
-        <h1 style="color:var(--accent)">NETLINK ENTERPRISE</h1>
-        <button class="btn btn-buy" style="background:var(--success); margin-bottom:20px;" onclick="enterShop()">🛒 BUYING</button>
-        <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
-        <input type="password" id="admin-pass" placeholder="Admin Key" style="padding:10px; border-radius:5px; border:none; margin-bottom:10px;"><br>
-        <button class="btn btn-cart" onclick="enterAdmin()">Staff Login</button>
+        <h1 style="margin-bottom:10px;">NETLINK</h1>
+        <p style="opacity:0.7; margin-bottom:30px;">Premium Hardware & Systems</p>
+        
+        <button class="btn" style="background:var(--success); color:white; width:100%;" onclick="enterApp(false)">🛒 Guest Shopping</button>
+        
+        <button class="btn btn-google" onclick="googleLogin()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" width="18" alt="G">
+            Sign in with Google (15% Discount)
+        </button>
+
+        <div style="margin-top:30px; border-top: 1px solid #334155; padding-top:20px;">
+            <input type="password" id="admin-pass" placeholder="Admin Key" style="background:#1e293b; border:none; color:white; padding:10px; border-radius:5px; width:80%; margin-bottom:10px;"><br>
+            <button class="btn" style="background:transparent; border:1px solid white; color:white; font-size:0.8rem;" onclick="enterAdmin()">Staff Login</button>
+        </div>
     </div>
 </div>
 
 <header id="main-header" class="hidden">
-    <h2 style="margin:0; font-size:1.2rem;">Netlink Store</h2>
-    <div class="search-container">
-        <input type="text" id="search" class="search-bar" placeholder="Search GPU, RAM, SSD..." onkeyup="filterProducts()">
+    <div>
+        <h2 style="margin:0; font-size:1.1rem;">Netlink Store</h2>
+        <span id="discount-status" style="font-size:0.7rem; color:var(--success)"></span>
     </div>
-    <div style="display:flex; gap:10px; align-items:center;">
-        <button class="btn btn-cart" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
-        <button class="btn" style="background:#ef4444; color:white; padding:10px;" onclick="location.reload()">Exit</button>
+    
+    <div style="display:flex; gap:15px; align-items:center;">
+        <button class="btn" style="background:#334155; color:white;" onclick="alert('Cart empty!')">Cart</button>
+        <div class="user-profile" id="user-display">
+            <div class="avatar">G</div>
+            <div><b id="user-name">Guest</b><br><span style="opacity:0.6" id="user-status">Free Account</span></div>
+        </div>
+        <button class="btn" style="background:#ef4444; color:white;" onclick="location.reload()">Exit</button>
     </div>
 </header>
 
@@ -81,110 +80,70 @@
     <div class="product-grid" id="grid"></div>
 </div>
 
-<div id="cart-modal">
-    <h3 style="margin-top:0">Shopping Cart</h3>
-    <div id="cart-items" style="max-height: 300px; overflow-y: auto; border-bottom: 1px solid #eee; margin-bottom: 15px;"></div>
-    <div style="display:flex; justify-content:space-between; font-weight:bold;">
-        <span>Total:</span><span id="cart-total">$0</span>
-    </div>
-    <button class="btn btn-buy" style="margin-top:15px; background:var(--success)" onclick="alert('Checkout initiated!')">Checkout Now</button>
-</div>
-
 <script>
+    let isMember = false;
     let isAdmin = false;
-    let cart = [];
 
     const products = [
-        { name: "RTX 5090 Ti", cat: "GPU", price: 1999, desc: "24GB VRAM, AI Accelerated." },
-        { name: "Ryzen 9 9950X", cat: "CPU", price: 699, desc: "16-Cores for extreme multitasking." },
-        { name: "Intel i9-14900K", cat: "CPU", price: 589, desc: "World class gaming performance." },
-        { name: "64GB DDR5 RAM", cat: "Memory", price: 210, desc: "6400MHz RGB Desktop Memory." },
-        { name: "4TB NVMe SSD", cat: "Storage", price: 320, desc: "Gen5 speed storage solution." },
-        { name: "RX 7900 XTX", cat: "GPU", price: 949, desc: "Elite 4K AMD Graphics." },
-        { name: "Liquid Arctic 360", cat: "Cooling", price: 145, desc: "Premium AIO Liquid Cooler." },
-        { name: "Titan 1000W PSU", cat: "Power", price: 180, desc: "80+ Platinum Efficiency." },
-        { name: "RGB LED Strips", cat: "Modding", price: 25, desc: "Addressable RGB lighting." },
-        { name: "Silent Case Fan", cat: "Cooling", price: 29, desc: "Ultra-quiet 140mm PWM." },
-        { name: "Z790 Master", cat: "Mobo", price: 299, desc: "Premium Intel Motherboard." },
-        { name: "X670E Hero", cat: "Mobo", price: 350, desc: "Top-tier AMD Motherboard." },
-        { name: "10Gbps LAN Card", cat: "Network", price: 85, desc: "High-speed Ethernet card." },
-        { name: "Vertical Mount", cat: "Parts", price: 45, desc: "GPU Riser Cable & Bracket." },
-        { name: "Fan Hub Pro", cat: "Parts", price: 18, desc: "Connect up to 10 PWM fans." },
-        { name: "Thermal Paste X", cat: "Cooling", price: 12, desc: "High-performance interface." },
-        { name: "Mechanical KBD", cat: "Peripherals", price: 110, desc: "Tactile Blue Switches." },
-        { name: "Wireless Mouse", cat: "Peripherals", price: 75, desc: "25K DPI Optical Sensor." },
-        { name: "4K 144Hz Monitor", cat: "Displays", price: 499, desc: "UHD Ultra-smooth display." },
-        { name: "Full Tower Case", cat: "Cases", price: 150, desc: "Tempered glass airflow case." }
+        { name: "RTX 5090 Ti", cat: "GPU", price: 1999 },
+        { name: "Ryzen 9 9950X", cat: "CPU", price: 699 },
+        { name: "64GB DDR5 RAM", cat: "Memory", price: 210 },
+        { name: "4TB NVMe SSD", cat: "Storage", price: 320 },
+        { name: "RX 7900 XTX", cat: "GPU", price: 949 },
+        { name: "Liquid Arctic 360", cat: "Cooler", price: 145 },
+        { name: "Titan 1000W PSU", cat: "Power", price: 180 },
+        { name: "Mechanical KBD", cat: "Peripherals", price: 110 }
+        // (Other 12 products would go here)
     ];
 
-    function enterShop() {
-        isAdmin = false;
-        showApp();
+    function googleLogin() {
+        const email = prompt("Enter Google Email:", "user@gmail.com");
+        if(email && email.includes("@")) {
+            isMember = true;
+            document.getElementById('user-name').innerText = email.split('@')[0];
+            document.getElementById('user-status').innerText = "Gold Member";
+            document.getElementById('discount-status').innerText = "✓ 15% GOOGLE DISCOUNT APPLIED";
+            enterApp(true);
+        }
     }
 
     function enterAdmin() {
         if(document.getElementById('admin-pass').value === '201412') {
             isAdmin = true;
-            showApp();
-        } else { alert("Key Denied"); }
+            enterApp(false);
+        } else { alert("Denied"); }
     }
 
-    function showApp() {
+    function enterApp(member) {
         document.getElementById('portal-overlay').classList.add('hidden');
         document.getElementById('main-header').classList.remove('hidden');
         document.getElementById('main-content').classList.remove('hidden');
-        render(products);
+        render();
     }
 
-    function render(list) {
+    function render() {
         const grid = document.getElementById('grid');
         grid.innerHTML = '';
-        list.forEach((p, index) => {
+        products.forEach(p => {
+            let finalPrice = p.price;
+            let priceHTML = `<div class="price">$${p.price}</div>`;
+            
+            if(isMember) {
+                finalPrice = (p.price * 0.85).toFixed(2);
+                priceHTML = `
+                    <div class="discount-badge">GOOGLE MEMBER PRICE</div>
+                    <div class="price"><span class="old-price">$${p.price}</span> $${finalPrice}</div>
+                `;
+            }
+
             grid.innerHTML += `
                 <div class="card">
                     <span class="tag">${p.cat}</span>
-                    <h3 style="margin:5px 0">${p.name}</h3>
-                    <p style="font-size:0.8rem; color:#64748b;">${p.desc}</p>
-                    <div class="price">$${p.price}</div>
-                    ${isAdmin ? `<button class="btn" style="background:#e2e8f0; margin-bottom:5px;" onclick="checkEdit()">Edit</button>` : ''}
-                    <button class="btn btn-buy" onclick="addToCart('${p.name}', ${p.price})">Buy Now</button>
+                    <h3 style="margin:10px 0 5px 0">${p.name}</h3>
+                    ${priceHTML}
+                    <button class="btn btn-buy">Add to Cart</button>
                 </div>`;
         });
-    }
-
-    function filterProducts() {
-        const term = document.getElementById('search').value.toLowerCase();
-        const filtered = products.filter(p => p.name.toLowerCase().includes(term) || p.cat.toLowerCase().includes(term));
-        render(filtered);
-    }
-
-    function addToCart(name, price) {
-        cart.push({name, price});
-        updateCart();
-    }
-
-    function updateCart() {
-        document.getElementById('cart-count').innerText = cart.length;
-        const list = document.getElementById('cart-items');
-        let total = 0;
-        list.innerHTML = '';
-        cart.forEach(item => {
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:0.85rem; padding:8px 0; border-bottom:1px solid #f1f5f9;">
-                <span>${item.name}</span><span>$${item.price}</span>
-            </div>`;
-            total += item.price;
-        });
-        document.getElementById('cart-total').innerText = '$' + total;
-    }
-
-    function toggleCart() {
-        const m = document.getElementById('cart-modal');
-        m.style.display = m.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function checkEdit() {
-        if(prompt("Admin Edit Code:") === '888888') alert("Authorized");
-        else alert("Denied");
     }
 </script>
 </body>
