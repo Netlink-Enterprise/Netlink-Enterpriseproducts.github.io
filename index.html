@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netlink Enterprise | Ultimate Portal</title>
+    <title>Netlink Enterprise | 50+ Item Inventory</title>
     <style>
-        :root { --primary: #2563eb; --success: #10b981; --dark: #0f172a; --gold: #f59e0b; --danger: #ef4444; }
+        :root { --primary: #2563eb; --success: #10b981; --dark: #0f172a; --gold: #f59e0b; --danger: #ef4444; --gray: #94a3b8; }
         body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 0; overflow-x: hidden; }
         
         /* Entrance Portal */
@@ -16,21 +16,20 @@
         }
         .portal-box { text-align: center; background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid #334155; width: 400px; }
 
-        /* Fixed Responsive Header */
+        /* Header Fix */
         header { 
             background: var(--dark); color: white; padding: 10px 25px; 
             position: sticky; top: 0; z-index: 1000;
             display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px;
         }
         .search-bar { flex: 1; max-width: 450px; min-width: 200px; padding: 10px 15px; border-radius: 20px; border: none; background: #1e293b; color: white; outline: none; }
-        .header-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
-        /* Admin Section */
+        /* Admin Creator */
         #admin-panel { background: #e2e8f0; padding: 15px 25px; border-bottom: 2px solid #cbd5e1; display: none; }
         .admin-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
         .admin-input { padding: 8px; border-radius: 6px; border: 1px solid #94a3b8; flex: 1; }
 
-        /* Fixed Sliding Cart Drawer */
+        /* Cart Drawer */
         #cart-drawer {
             position: fixed; right: -350px; top: 0; width: 320px; height: 100%;
             background: white; box-shadow: -5px 0 25px rgba(0,0,0,0.2);
@@ -40,19 +39,19 @@
         #cart-drawer.open { right: 0; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
 
-        /* UI Buttons */
+        /* Buttons & Badges */
         .btn { border: none; border-radius: 8px; cursor: pointer; font-weight: 600; padding: 10px 18px; transition: 0.2s; }
         .btn-buy { background: var(--primary); color: white; width: 100%; margin-top: auto; }
-        .btn-cart-toggle { background: #334155; color: white; position: relative; display: flex; align-items: center; gap: 8px; }
+        .btn-buy:disabled { background: var(--gray); cursor: not-allowed; }
         .btn-delete { background: #fee2e2; color: var(--danger); border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
-        .badge { background: var(--danger); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
-        .gold-star { background: var(--gold); color: black; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 900; }
+        .stock-tag { font-size: 0.7rem; font-weight: bold; margin-top: 5px; }
+        .low-stock { color: var(--danger); }
+        .in-stock { color: var(--success); }
 
         /* Grid */
         .container { padding: 25px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: 0.3s; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -60,50 +59,46 @@
 
 <div id="portal-overlay">
     <div class="portal-box">
-        <h1 style="margin:0 0 10px 0;">NETLINK</h1>
+        <h1>NETLINK</h1>
         <button class="btn" style="background:var(--success); color:white; width:100%;" onclick="enterApp(false)">🛒 Guest Shopping</button>
         <button class="btn" style="background:white; color:#333; width:100%; margin-top:10px; border:1px solid #ddd;" onclick="googleLogin()">Sign in with Gmail</button>
         <div style="margin-top:30px; border-top: 1px solid #334155; padding-top:20px;">
             <input type="password" id="admin-pass" placeholder="Admin Key" style="background:#1e293b; border:none; color:white; padding:10px; border-radius:8px; width:80%;">
-            <button class="btn" style="background:transparent; border:1px solid white; color:white; margin-top:10px; font-size:0.8rem;" onclick="enterAdmin()">Staff Login</button>
+            <button class="btn" style="background:transparent; border:1px solid white; color:white; margin-top:10px;" onclick="enterAdmin()">Staff Login</button>
         </div>
     </div>
 </div>
 
 <header id="main-header" class="hidden">
-    <h2 style="margin:0; font-size:1.2rem; color: var(--gold);">Netlink</h2>
-    <input type="text" id="search" class="search-bar" placeholder="Search inventory..." onkeyup="filterItems()">
-    <div class="header-actions">
-        <span id="gold-star-label" class="hidden"><span class="gold-star">⭐ GOLD STAR</span></span>
-        <b id="user-name" style="font-size:0.85rem;">Guest</b>
-        <button class="btn btn-cart-toggle" onclick="toggleCart()">🛒 <span class="badge" id="cart-count">0</span></button>
-        <button class="btn" style="background:var(--danger); color:white; padding:8px 12px;" onclick="location.reload()">Exit</button>
+    <h2 style="margin:0; color: var(--gold);">Netlink</h2>
+    <input type="text" id="search" class="search-bar" placeholder="Search 50+ components..." onkeyup="filterItems()">
+    <div style="display:flex; gap:10px; align-items:center;">
+        <b id="user-name">Guest</b>
+        <button class="btn" style="background:#334155; color:white;" onclick="toggleCart()">🛒 <span id="cart-count">0</span></button>
+        <button class="btn" style="background:var(--danger); color:white;" onclick="location.reload()">Exit</button>
     </div>
 </header>
 
 <div id="admin-panel">
-    <h4 style="margin:0 0 10px 0;">Add New Stock</h4>
     <div class="admin-form">
         <input type="text" id="new-name" class="admin-input" placeholder="Item Name">
         <input type="text" id="new-cat" class="admin-input" placeholder="Category">
-        <input type="number" id="new-price" class="admin-input" placeholder="Price" step="0.01">
-        <button class="btn" style="background:var(--dark); color:white;" onclick="createNewItem()">Add to Store</button>
+        <input type="number" id="new-price" class="admin-input" placeholder="Price">
+        <input type="number" id="new-stock" class="admin-input" placeholder="Stock Qty">
+        <button class="btn" style="background:var(--dark); color:white;" onclick="createNewItem()">Add Stock</button>
     </div>
 </div>
 
 <div id="cart-drawer">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h3 style="margin:0;">Your Cart</h3>
-        <button onclick="toggleCart()" style="background:none; border:none; cursor:pointer; font-size:1.8rem; color:#94a3b8;">&times;</button>
-    </div>
+    <h3>Your Cart</h3>
     <div id="cart-items-list" style="flex-grow:1; overflow-y:auto;"></div>
     <div style="border-top: 2px solid #f1f5f9; padding-top:15px; margin-top:10px; font-size:0.9rem;">
         <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span id="subtotal">$0.00</span></div>
         <div style="display:flex; justify-content:space-between; color:var(--danger);"><span>Tax (7%):</span><span id="tax-amount">$0.00</span></div>
-        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem; margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem; margin-top:10px;">
             <span>TOTAL:</span><span id="cart-total" style="color:var(--success)">$0.00</span>
         </div>
-        <button class="btn" style="background:var(--success); color:white; width:100%; margin-top:15px; height:50px;" onclick="alert('Order Placed!')">CHECKOUT</button>
+        <button class="btn" style="background:var(--success); color:white; width:100%; margin-top:15px;" onclick="alert('Checkout Complete!')">CHECKOUT</button>
     </div>
 </div>
 
@@ -117,24 +112,71 @@
     let cart = [];
     const taxRate = 0.07;
 
+    // Massive Inventory (54 Items Total)
     let products = [
-        { name: "RTX 5090 Ti", cat: "GPU", price: 1999.99 }, { name: "Ryzen 9 9950X", cat: "CPU", price: 699.50 },
-        { name: "Intel i9-14900K", cat: "CPU", price: 589.00 }, { name: "64GB DDR5 RAM", cat: "Memory", price: 210.99 },
-        { name: "4TB NVMe SSD", cat: "Storage", price: 320.00 }, { name: "RX 7900 XTX", cat: "GPU", price: 949.99 },
-        { name: "Liquid Arctic 360", cat: "Cooling", price: 145.25 }, { name: "Titan 1000W PSU", cat: "Power", price: 180.00 },
-        { name: "RGB LED Strips", cat: "Modding", price: 25.50 }, { name: "Silent Case Fan", cat: "Cooling", price: 29.99 },
-        { name: "Z790 Master", cat: "Mobo", price: 299.00 }, { name: "X670E Hero", cat: "Mobo", price: 350.00 },
-        { name: "Mechanical KBD", cat: "Peripherals", price: 110.99 }, { name: "Wireless Mouse", cat: "Peripherals", price: 75.50 }
+        { id: 1, name: "RTX 5090 Ti", cat: "GPU", price: 1999.99, stock: 2 },
+        { id: 2, name: "Ryzen 9 9950X", cat: "CPU", price: 699.00, stock: 5 },
+        { id: 3, name: "Z790 Motherboard", cat: "MOBO", price: 350.00, stock: 10 },
+        { id: 4, name: "64GB DDR5 RAM", cat: "RAM", price: 210.00, stock: 15 },
+        { id: 5, name: "4TB NVMe SSD", cat: "SSD", price: 300.00, stock: 8 },
+        { id: 6, name: "1200W Titanium PSU", cat: "PSU", price: 280.00, stock: 4 },
+        { id: 7, name: "AIO Liquid Cooler", cat: "Cooling", price: 150.00, stock: 12 },
+        { id: 8, name: "Full Tower Case", cat: "Case", price: 180.00, stock: 6 },
+        { id: 9, name: "RTX 4060", cat: "GPU", price: 299.00, stock: 20 },
+        { id: 10, name: "Core i5-14400", cat: "CPU", price: 220.00, stock: 14 },
+        { id: 11, name: "27in 4K Monitor", cat: "Display", price: 450.00, stock: 7 },
+        { id: 12, name: "Mechanical Keyboard", cat: "Periph", price: 120.00, stock: 25 },
+        { id: 13, name: "Gaming Mouse", cat: "Periph", price: 80.00, stock: 30 },
+        { id: 14, name: "Stream Deck XL", cat: "Stream", price: 240.00, stock: 3 },
+        { id: 15, name: "WiFi 7 Router", cat: "Network", price: 399.00, stock: 5 },
+        { id: 16, name: "Capture Card 4K", cat: "Stream", price: 199.00, stock: 9 },
+        { id: 17, name: "X670E AM5 Mobo", cat: "MOBO", price: 320.00, stock: 6 },
+        { id: 18, name: "32GB DDR4 RAM", cat: "RAM", price: 85.00, stock: 40 },
+        { id: 19, name: "2TB External HDD", cat: "SSD", price: 60.00, stock: 18 },
+        { id: 20, name: "Noise Cancel Headphones", cat: "Audio", price: 350.00, stock: 11 },
+        { id: 21, name: "Studio Microphone", cat: "Audio", price: 250.00, stock: 4 },
+        { id: 22, name: "Webcam 1080p", cat: "Stream", price: 90.00, stock: 22 },
+        { id: 23, name: "Thermal Paste Pro", cat: "Cooling", price: 12.00, stock: 100 },
+        { id: 24, name: "SATA Cable 3-Pack", cat: "Parts", price: 9.00, stock: 50 },
+        { id: 25, name: "GPU Vertical Mount", cat: "Case", price: 45.00, stock: 12 },
+        { id: 26, name: "Case Fan 120mm", cat: "Cooling", price: 15.00, stock: 60 },
+        { id: 27, name: "10Gbps Network Card", cat: "Network", price: 95.00, stock: 8 },
+        { id: 28, name: "Thunderbolt Dock", cat: "Network", price: 220.00, stock: 6 },
+        { id: 29, name: "UPS Backup 1500VA", cat: "PSU", price: 190.00, stock: 3 },
+        { id: 30, name: "Gaming Chair Black", cat: "Office", price: 399.00, stock: 5 },
+        { id: 31, name: "Standing Desk Frame", cat: "Office", price: 280.00, stock: 10 },
+        { id: 32, name: "Curved 49in Monitor", cat: "Display", price: 1100.00, stock: 2 },
+        { id: 33, name: "B650 ITX Mobo", cat: "MOBO", price: 240.00, stock: 7 },
+        { id: 34, name: "SFX 750W PSU", cat: "PSU", price: 160.00, stock: 9 },
+        { id: 35, name: "USB-C Hub 10-in-1", cat: "Periph", price: 55.00, stock: 25 },
+        { id: 36, name: "Micro SD 512GB", cat: "SSD", price: 45.00, stock: 45 },
+        { id: 37, name: "VR Headset Gen3", cat: "Gaming", price: 599.00, stock: 4 },
+        { id: 38, name: "Flight Sim Joystick", cat: "Gaming", price: 180.00, stock: 6 },
+        { id: 39, name: "Racing Wheel Base", cat: "Gaming", price: 450.00, stock: 2 },
+        { id: 40, name: "External GPU Dock", cat: "GPU", price: 300.00, stock: 3 },
+        { id: 41, name: "Laptop Cooler Pad", cat: "Cooling", price: 35.00, stock: 15 },
+        { id: 42, name: "Soundbar RGB", cat: "Audio", price: 75.00, stock: 20 },
+        { id: 43, name: "NAS Storage 4-Bay", cat: "Network", price: 499.00, stock: 4 },
+        { id: 44, name: "Braided Cable Kit", cat: "Parts", price: 30.00, stock: 30 },
+        { id: 45, name: "Internal USB Hub", cat: "Parts", price: 20.00, stock: 15 },
+        { id: 46, name: "Air Duster Electric", cat: "Tools", price: 45.00, stock: 12 },
+        { id: 47, name: "Precision Tool Kit", cat: "Tools", price: 35.00, stock: 25 },
+        { id: 48, name: "Antistatic Mat", cat: "Tools", price: 25.00, stock: 10 },
+        { id: 49, name: "HDMI 2.1 Cable 10ft", cat: "Parts", price: 18.00, stock: 50 },
+        { id: 50, name: "DisplayPort 1.4", cat: "Parts", price: 15.00, stock: 40 },
+        { id: 51, name: "Raspberry Pi 5", cat: "SingleBoard", price: 80.00, stock: 10 },
+        { id: 52, name: "Arduino Uno R4", cat: "SingleBoard", price: 25.00, stock: 20 },
+        { id: 53, name: "ESP32 Controller", cat: "SingleBoard", price: 10.00, stock: 100 },
+        { id: 54, name: "OLED 0.96in Screen", cat: "Parts", price: 8.00, stock: 80 }
     ];
 
     function googleLogin() {
-        const email = prompt("Enter @gmail.com address:");
+        const email = prompt("Gmail address:");
         if(email && email.toLowerCase().endsWith("@gmail.com")) {
             isMember = true;
             document.getElementById('user-name').innerText = email.split('@')[0];
-            document.getElementById('gold-star-label').classList.remove('hidden');
             enterApp();
-        } else { alert("Valid @gmail.com required for membership."); }
+        }
     }
 
     function enterAdmin() {
@@ -142,7 +184,7 @@
             isAdmin = true;
             document.getElementById('admin-panel').style.display = 'block';
             enterApp();
-        } else { alert("Denied."); }
+        }
     }
 
     function enterApp() {
@@ -156,11 +198,10 @@
         const name = document.getElementById('new-name').value;
         const cat = document.getElementById('new-cat').value;
         const price = parseFloat(document.getElementById('new-price').value);
-        if(name && cat && !isNaN(price)) {
-            products.unshift({ name, cat, price });
+        const stock = parseInt(document.getElementById('new-stock').value);
+        if(name && !isNaN(price) && !isNaN(stock)) {
+            products.unshift({ id: Date.now(), name, cat, price, stock });
             render(products);
-            document.getElementById('new-name').value = '';
-            document.getElementById('new-price').value = '';
         }
     }
 
@@ -169,45 +210,56 @@
         grid.innerHTML = '';
         list.forEach(p => {
             const finalPrice = isMember ? (p.price * 0.85).toFixed(2) : p.price.toFixed(2);
+            const outOfStock = p.stock <= 0;
             grid.innerHTML += `
                 <div class="card">
-                    <span style="font-size:0.65rem; color:var(--primary); font-weight:800; text-transform:uppercase;">${p.cat}</span>
-                    <h4 style="margin:8px 0">${p.name}</h4>
-                    <div style="color:var(--success); font-weight:800; margin-bottom:12px;">$${finalPrice}</div>
-                    <button class="btn btn-buy" onclick="addToCart('${p.name}', ${finalPrice})">Add to Cart</button>
+                    <span style="font-size:0.6rem; font-weight:800; color:var(--primary);">${p.cat}</span>
+                    <h4 style="margin:5px 0">${p.name}</h4>
+                    <div style="font-weight:800; color:var(--success);">$${finalPrice}</div>
+                    <div class="stock-tag ${outOfStock ? 'low-stock' : 'in-stock'}">
+                        ${outOfStock ? 'SOLD OUT' : 'In Stock: ' + p.stock}
+                    </div>
+                    <button class="btn btn-buy" 
+                            onclick="addToCart(${p.id})" 
+                            ${outOfStock ? 'disabled' : ''}>
+                        ${outOfStock ? 'Out of Stock' : 'Add to Cart'}
+                    </button>
                 </div>`;
         });
     }
 
-    function addToCart(name, price) {
-        cart.push({name, price});
-        updateCart();
-        document.getElementById('cart-drawer').classList.add('open');
+    function addToCart(productId) {
+        const product = products.find(p => p.id === productId);
+        if (product && product.stock > 0) {
+            product.stock--; // Reduce stock
+            cart.push({ id: product.id, name: product.name, price: isMember ? (product.price * 0.85) : product.price });
+            updateCart();
+            render(products);
+            document.getElementById('cart-drawer').classList.add('open');
+        }
     }
 
-    function removeFromCart(index) {
+    function removeFromCart(index, productId) {
+        const product = products.find(p => p.id === productId);
+        if (product) product.stock++; // Return item to stock
         cart.splice(index, 1);
         updateCart();
+        render(products);
     }
 
     function updateCart() {
         document.getElementById('cart-count').innerText = cart.length;
         const list = document.getElementById('cart-items-list');
         let subtotal = 0;
-        list.innerHTML = cart.length === 0 ? '<p style="color:#94a3b8; text-align:center;">Empty.</p>' : '';
-        
+        list.innerHTML = '';
         cart.forEach((item, index) => {
             list.innerHTML += `
                 <div class="cart-item">
-                    <div>
-                        <div style="font-weight:600; font-size:0.85rem;">${item.name}</div>
-                        <div style="color:var(--success); font-size:0.8rem;">$${item.price.toFixed(2)}</div>
-                    </div>
-                    <button class="btn-delete" onclick="removeFromCart(${index})">Remove</button>
+                    <div style="font-size:0.85rem;"><b>${item.name}</b><br>$${item.price.toFixed(2)}</div>
+                    <button class="btn-delete" onclick="removeFromCart(${index}, ${item.id})">Remove</button>
                 </div>`;
             subtotal += item.price;
         });
-
         const tax = subtotal * taxRate;
         const total = subtotal + tax;
         document.getElementById('subtotal').innerText = '$' + subtotal.toFixed(2);
